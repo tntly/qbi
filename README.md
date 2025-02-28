@@ -2,3 +2,4 @@
 
 ## Team Members
 * Tien Ly
+* Heather Ho
