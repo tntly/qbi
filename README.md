@@ -5,3 +5,4 @@
 * Heather Ho
 * Solhee Tucker
 * Patricia Saito
+* Lawrence Fung
