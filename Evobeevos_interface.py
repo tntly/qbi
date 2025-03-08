@@ -4,6 +4,8 @@ import numpy as np
 
 st.title("EvoBeevos Variant Predictor 🐝")
 
+st.title("Hello this is a title")
+
 # Display result and score on main page
 # Display CliVar comparison on main page as well?
 # Sidebar will have user input info, or should it also be on main page
