@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
+from clinvar import get_clinvar_data
 
 st.title("EvoBeevos Variant Predictor 🐝")
 
@@ -14,18 +15,22 @@ st.write("EvoBeevos is a comprehensive "
          "for caching results, and an AI chatbot for user assistance.")
 
 with st.form("uscs-form",clear_on_submit=False, enter_to_submit=True):
-    st.write("Input chromosome address in UCSC format")
-    chromosome_number = st.number_input("Chromosome Number")
-    starting_base_pair = st.text_input("Starting Base Pair")
-    ending_base_pair = st.text_input("Ending Base Pair")
+    st.write("Input gene location")
+    chromosome_number = st.number_input("Chromosome Number", min_value=0, step=1)
+    starting_base_pair = st.number_input("Starting Base Pair",min_value=0, step=1)
+    ending_base_pair = st.number_input("Ending Base Pair",min_value=0, step=1)
     submitted = st.form_submit_button("Submit")
     if submitted:
         st.write("Chromosome number",chromosome_number,
                  "Starting BP", starting_base_pair,
-                 "Ending BP", ending_base_pair
-                 )
-
-
+                 "Ending BP", ending_base_pair,)
+        
+        ucsc_input = f"chr{chromosome_number}:{starting_base_pair}-{ending_base_pair}"
+        st.write( "UCSC format",ucsc_input)
+        result = get_clinvar_data(ucsc_input)
+        variant_df = result["vars"]
+        df = pd.DataFrame(variant_df)
+        st.dataframe(df, use_container_width=True)
 
 
 st.write("EvoBeevos is a comprehensive "
