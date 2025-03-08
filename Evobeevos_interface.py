@@ -27,6 +27,14 @@ with st.form("uscs-form",clear_on_submit=False, enter_to_submit=True):
 
 
 
+
+st.write("EvoBeevos is a comprehensive "
+         "Variant Effect Predictor that leverages the Evo 2 AI model "
+         "to predict genetic variant effects. It compares these predictions with "
+         "ClinVar/dbSNP data, offering users a thorough analysis of variant significance. "
+         "The app features a Streamlit interface, API integrations, a lightweight database "
+         "for caching results, and an AI chatbot for user assistance.")
+
 # Display result and score on main page
 # Display CliVar comparison on main page as well?
 # Sidebar will have user input info, or should it also be on main page
