@@ -31,9 +31,10 @@ with st.form("uscs-form",clear_on_submit=False, enter_to_submit=True):
         ucsc_input = f"chr{chromosome_number}:{starting_base_pair}-{ending_base_pair}"
         st.write( "UCSC format",ucsc_input)
         result = get_clinvar_data(ucsc_input)
-        variant_df = result["vars"]
-        df = pd.DataFrame(variant_df)
-        st.dataframe(df, use_container_width=True)
+        if result["vars"]:
+            variant_df = result["vars"]
+            df = pd.DataFrame(variant_df)
+            st.dataframe(df, use_container_width=True)
 
 # Display result and score on main page
 # Display CliVar comparison on main page as well?
