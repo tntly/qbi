@@ -46,3 +46,14 @@ Install make
 ```bash
 sudo apt-get install make
 ```
+
+## Run streamlit
+try:
+```bash
+streamlit run Evobeevos_interface.py
+```
+
+If that doesn't work cuz stremlit cli is not installed, run it as python module
+```bash
+python -m streamlit run Evobeevos_interface.py
+```
