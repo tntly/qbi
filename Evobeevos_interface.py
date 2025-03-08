@@ -35,20 +35,12 @@ with st.form("uscs-form",clear_on_submit=False, enter_to_submit=True):
         df = pd.DataFrame(variant_df)
         st.dataframe(df, use_container_width=True)
 
-
-st.write("EvoBeevos is a comprehensive "
-         "Variant Effect Predictor that leverages the Evo 2 AI model "
-         "to predict genetic variant effects. It compares these predictions with "
-         "ClinVar/dbSNP data, offering users a thorough analysis of variant significance. "
-         "The app features a Streamlit interface, API integrations, a lightweight database "
-         "for caching results, and an AI chatbot for user assistance.")
-
 # Display result and score on main page
 # Display CliVar comparison on main page as well?
 # Sidebar will have user input info, or should it also be on main page
 # Where to put chatbot?
 # What kind of input do we want the user to put in (i.e DNA sequences? Should we cap how long the sequence can be?)
-st.title("EvoBeevos Chatbot 🤖")
+st.header("EvoBeevos Chatbot 🤖")
 # openAi chatbot
 client = Groq(
     api_key=st.secrets["GROQ_API_KEY"],
@@ -100,7 +92,20 @@ with col2:
         step=512,
         help=f"Adjust the maximum number of tokens (words) for the model's response. Max for selected model: {max_tokens_range}"
     )
-
+    temper = st.slider(
+            "Temperature:",
+            min_value=0.0,  # Minimum value to allow some flexibility
+            max_value=1.0,
+            step=0.05,
+            help=f"Adjust the temperature for the model's response. Lower temperatures are highly structured while higher temperatures are more creative."
+        )
+    top_p = st.slider(
+        "Top_p:",
+        min_value=0.0,  # Minimum value to allow some flexibility
+        max_value=1.0,
+        step=0.05,
+        help=f"Adjust the top-p for the model's response. Lower values of top-p make a more structured and focused model while higher temperatures are more diverse."
+    )
 # Display chat messages from history on app rerun
 for message in st.session_state.messages:
     avatar = '🤖' if message["role"] == "assistant" else '👨‍💻'
@@ -133,6 +138,8 @@ if prompt := st.chat_input("Enter your prompt here..."):
                 for m in st.session_state.messages
             ],
             max_tokens=max_tokens,
+            temperature=temper,
+            top_p=top_p,
             stream=True
         )
 
