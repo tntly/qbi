@@ -1,7 +1,10 @@
-import openai
+
+from groq import Groq
+from typing import Generator
 import streamlit as st
 import pandas as pd
 import numpy as np
+
 
 st.title("EvoBeevos Variant Predictor 🐝")
 
@@ -27,60 +30,106 @@ with st.form("uscs-form",clear_on_submit=False, enter_to_submit=True):
                  )
 
 
-# openAi chatbot
-st.title("EvoBeevos Chatbot 🤖")
+# groq chatbot
+client = Groq(
+    api_key=st.secrets["GROQ_API_KEY"],
+)
 
-api_key = st.secrets['openai']['api_key']
-
-openai.api_key = api_key
-
-if "openai_model" not  in st.session_state:
-    st.session_state.openai_model = "gpt-3.5-turbo"
-# with st.chat_message(name="assistant"):
-    # st.write("Hello! I am EvoBeevos, your friendly AI chatbot. How can I help you today?")'''
-
-# Initialize chat history
-if 'messages' not in st.session_state:
+# Initialize chat history and selected model
+if "messages" not in st.session_state:
     st.session_state.messages = []
+
+if "selected_model" not in st.session_state:
+    st.session_state.selected_model = None
+
+# Define model details
+models = {
+    "gemma2-9b-it": {"name": "Gemma2-9b-it", "tokens": 8192, "developer": "Google"},
+    "llama-3.3-70b-versatile": {"name": "LLaMA3.3-70b-versatile", "tokens": 128000, "developer": "Meta"},
+    "llama-3.1-8b-instant" : {"name": "LLaMA3.1-8b-instant", "tokens": 128000, "developer": "Meta"},
+    "llama3-70b-8192": {"name": "LLaMA3-70b-8192", "tokens": 8192, "developer": "Meta"},
+    "llama3-8b-8192": {"name": "LLaMA3-8b-8192", "tokens": 8192, "developer": "Meta"},
+    "mixtral-8x7b-32768": {"name": "Mixtral-8x7b-Instruct-v0.1", "tokens": 32768, "developer": "Mistral"},
+}
+
+# Layout for model selection and max_tokens slider
+col1, col2 = st.columns(2)
+
+with col1:
+    model_option = st.selectbox(
+        "Choose a model:",
+        options=list(models.keys()),
+        format_func=lambda x: models[x]["name"],
+        index=4  # Default to mixtral
+    )
+
+# Detect model change and clear chat history if model has changed
+if st.session_state.selected_model != model_option:
+    st.session_state.messages = []
+    st.session_state.selected_model = model_option
+
+max_tokens_range = models[model_option]["tokens"]
+
+with col2:
+    # Adjust max_tokens slider dynamically based on the selected model
+    max_tokens = st.slider(
+        "Max Tokens:",
+        min_value=512,  # Minimum value to allow some flexibility
+        max_value=max_tokens_range,
+        # Default value or max allowed if less
+        value=min(32768, max_tokens_range),
+        step=512,
+        help=f"Adjust the maximum number of tokens (words) for the model's response. Max for selected model: {max_tokens_range}"
+    )
 
 # Display chat messages from history on app rerun
 for message in st.session_state.messages:
-    with st.chat_message(message['role']):
-        st.write(message['content'])
+    avatar = '🤖' if message["role"] == "assistant" else '👨‍💻'
+    with st.chat_message(message["role"], avatar=avatar):
+        st.markdown(message["content"])
 
-# React to user input
-if prompt := st.chat_input("What is up?"):
-    # Display user message in chat message container
-    with st.chat_message(name="user"):
-        st.markdown(prompt)
-    # Store user message in chat history
+
+def generate_chat_responses(chat_completion) -> Generator[str, None, None]:
+    """Yield chat response content from the Groq API response."""
+    for chunk in chat_completion:
+        if chunk.choices[0].delta.content:
+            yield chunk.choices[0].delta.content
+
+
+if prompt := st.chat_input("Enter your prompt here..."):
     st.session_state.messages.append({"role": "user", "content": prompt})
 
-    # Get response from OpenAI
-    with st.chat_message("assistant"):
-        message_placeholder = st.empty()
-        full_response = ""
-        for response in openai.ChatCompletion.create(
-            model=st.session_state["openai_model"],
+    with st.chat_message("user", avatar='👨‍💻'):
+        st.markdown(prompt)
+
+    # Fetch response from Groq API
+    try:
+        chat_completion = client.chat.completions.create(
+            model=model_option,
             messages=[
-                {"role": m["role"], "content": m["content"]}
-                for m in st.session_state.messages   
+                {
+                    "role": m["role"],
+                    "content": m["content"]
+                }
+                for m in st.session_state.messages
             ],
-            stream=True,
-        ):
-            full_response += response.choices[0].delta.get("content", "")
-            message_placeholder.markdown(full_response + "|")
-        message_placeholder.markdown(full_response)
-    st.session_state.messages.append({"role": "assistant", "content": full_response})   
+            max_tokens=max_tokens,
+            stream=True
+        )
 
-            
+        # Use the generator function with st.write_stream
+        with st.chat_message("assistant", avatar="🤖"):
+            chat_responses_generator = generate_chat_responses(chat_completion)
+            full_response = st.write_stream(chat_responses_generator)
+    except Exception as e:
+        st.error(e, icon="🚨")
 
-
-
-
-
-# Display result and score on main page
-# Display CliVar comparison on main page as well?
-# Sidebar will have user input info, or should it also be on main page
-# Where to put chatbot?
-# What kind of input do we want the user to put in (i.e DNA sequences? Should we cap how long the sequence can be?)
+    # Append the full response to session_state.messages
+    if isinstance(full_response, str):
+        st.session_state.messages.append(
+            {"role": "assistant", "content": full_response})
+    else:
+        # Handle the case where full_response is not a string
+        combined_response = "\n".join(str(item) for item in full_response)
+        st.session_state.messages.append(
+            {"role": "assistant", "content": combined_response})
