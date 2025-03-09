@@ -55,23 +55,29 @@ counts_conditions = alz_vcf.INFO.map(lambda x: x.split(";")[2] if x.split(";")[2
 
 # %%
 # filter out "CLNDN=not_provided","CLNDN=not_specified"
-just1_conditions = counts_conditions[~counts_conditions.index.isin(["CLNDN=not_provided","CLNDN=not_specified"])]  
+just_conditions = counts_conditions[~counts_conditions.index.isin(["CLNDN=not_provided","CLNDN=not_specified"])]  
 # must put .index or it will only filter by the associated value and not the name
 
 # print(just1_conditions)
 
 # %%
-# list(map(print, just1_conditions.head(5).index))
-# for condition in just1_conditions.head(5).index:
+# list(map(print, just_conditions.head(5).index))
+# for condition in just_conditions.head(5).index:
     # print(condition[6:])
 
 # %%
-
 # just get the top 5 conditions
-top_cond = []
-for condition in just1_conditions.head(5).index:
-    top_cond.append(str(condition[6:]))
+# top_cond = []
+# for condition in just_conditions.head(5).index:
+#     top_cond.append(str(condition[6:]))
 
-print(top_cond)
+# print(top_cond)
 
 
+# dictionary of just conditions and occurances for top 5
+# print(just_conditions.head(5))
+
+top_cond_dict = {str(condition[6:]): just_conditions[condition].item() for condition in just_conditions.head(5).index}
+
+# Print the dictionary
+print(top_cond_dict)
