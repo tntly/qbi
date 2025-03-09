@@ -29,7 +29,7 @@ if submitted:
     st.write(f"**UCSC Format:** {ucsc_input}")
 
     # Placeholder result
-    evo2_result = "Likely Pathogenic" # placeholder
+    evo2_result = "Likely to cause LOF" # placeholder
     evo2_delta_score = 0.000299
 
     ensemble_result = [
