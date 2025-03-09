@@ -50,4 +50,63 @@ def get_clinvar_data(ucsc_coords: str, assembly="GRCh38"):
 ucsc_input = "chr2:12345-67890"
 result = get_clinvar_data(ucsc_input)
 print(result)
- """
+
+
+count_variant = variant_df['ci'].value_counts()
+print(count_variant) """
+
+import requests
+from bs4 import BeautifulSoup
+from urllib.parse import quote
+
+def extract_all_syndrome_names(html):
+    # Parse the HTML content
+    soup = html
+    
+    # Find all 'td' elements with the class 'pad-right'
+    syndrome_td = soup.find_all('td', class_='pad-right')
+    
+    # Extract the text inside these 'td' elements
+    syndrome_names = [td.get_text(strip=True) for td in syndrome_td]
+    
+    # Filter and return all occurrences of the syndrome name
+    syndrome_list = [name for name in syndrome_names]
+    
+    return syndrome_list
+
+
+def fetch_conditions(ucsc_coords: str, assembly="GRCh38"):
+    # Set up the headers like in the JavaScript fetch request
+    encoded_coords = quote(ucsc_coords)
+
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:136.0) Gecko/20100101 Firefox/136.0",
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+        "Accept-Language": "en-US,en;q=0.5",
+        "Upgrade-Insecure-Requests": "1",
+        "Sec-Fetch-Dest": "document",
+        "Sec-Fetch-Mode": "navigate",
+        "Sec-Fetch-Site": "same-origin",
+        "Sec-Fetch-User": "?1",
+        "Sec-GPC": "1"
+    }
+
+    url = f"https://www.ncbi.nlm.nih.gov/clinvar/?term={encoded_coords}"
+    print(url)
+
+
+    # Send the GET request with the headers
+    response = requests.get(url, headers=headers)
+
+    # Check if the request was successful
+    if response.status_code == 200:
+        # Parse the content of the page with BeautifulSoup
+        soup = BeautifulSoup(response.text, 'html.parser')
+
+        data = extract_all_syndrome_names(soup)
+
+        # Return the parsed HTML (You can perform further operations on the soup here)
+        return data
+    else:
+        # If the request fails, return the status code for debugging
+        return f"Failed to retrieve content. Status code: {response.status_code}"
