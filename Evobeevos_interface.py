@@ -1,10 +1,7 @@
-
 from groq import Groq
 from typing import Generator
 import streamlit as st
 import pandas as pd
-import numpy as np
-from clinvar import get_clinvar_data, fetch_conditions
 
 st.title("EvoBeevos Variant Predictor 🐝")
 
@@ -14,39 +11,93 @@ st.write("EvoBeevos is a comprehensive "
          "Variant Effect Predictor that leverages the Evo 2 AI model "
          "to predict genetic variant effects. It compares these predictions with "
          "ClinVar/dbSNP data, offering users a thorough analysis of variant significance. "
-         "The app features a Streamlit interface, API integrations, a lightweight database "
-         "for caching results, and an AI chatbot for user assistance.")
+         "The app features a Streamlit interface, API integrations, and an AI chatbot for user assistance.")
 
-with st.form("uscs-form",clear_on_submit=False, enter_to_submit=True):
-    st.write("Input gene location")
-    chromosome_number = st.number_input("Chromosome Number", min_value=0, step=1)
-    starting_base_pair = st.number_input("Starting Base Pair",min_value=0, step=1)
-    ending_base_pair = st.number_input("Ending Base Pair",min_value=0, step=1)
-    submitted = st.form_submit_button("Submit")
-    if submitted:
-        st.write("Chromosome number",chromosome_number,
-                 "Starting BP", starting_base_pair,
-                 "Ending BP", ending_base_pair,)
+# User input form
+with st.expander("**User input form**"):
+    with st.form("uscs-form",clear_on_submit=False):
+        st.write("Input gene location")
+        chromosome_number = st.number_input("Chromosome Number",min_value=0, step=1, value=17)
+        base_pairs = ['A', 'T', 'C', 'G']
+        mutation_position = st.number_input("Mutation position", min_value=0, step=1,value=41276133)
+        original_allele = st.selectbox("Enter original base pair", base_pairs)
+        mutated_allele = st.selectbox("Enter mutated base pair", base_pairs)
+        submitted = st.form_submit_button("Submit")
+# Processing input and displaying results
+if submitted:
+    ucsc_input = f"chr{chromosome_number}:{mutation_position}{original_allele}>{mutated_allele}"
+    st.write(f"**UCSC Format:** {ucsc_input}")
+
+    # Placeholder result
+    evo2_result = "Likely Pathogenic" # placeholder
+    evo2_delta_score = 0.000299
+
+    ensemble_result = [
+        "Gene id:'ENSG00000180386'",
+        "Consequence terms: stop_gained",
+        "biotype: protein_coding",
+        "impact: HIGH"
+    ] # placeholder
+
+    clinvar_conditions = [
+        "Condition 1",
+        "Condition 2",
+        "Condition 3",
+        "Condition 4",
+        "Condition 5"
+    ] # placeholder for clinvar conditions
+    
+    with st.expander("**Prediction Results**"):
+        # Evo model result
+        st.subheader("Evo2 Model Prediction")
+        st.write(f"**Result: **{evo2_result}")
+        st.write(f"**Delta Score: **{evo2_delta_score}")
+
+        # Ensemble model result
+        st.subheader("Ensemble Model Prediction")
+        st.write("**Result: **")
+        for item in ensemble_result:
+            st.write(f"- {item}")
         
-        ucsc_input = f"chr{chromosome_number}:{starting_base_pair}-{ending_base_pair}"
-        st.write( "UCSC format",ucsc_input)
-        result = get_clinvar_data(ucsc_input)
-        conditions = fetch_conditions(ucsc_input) # get it from cilnvar.py
-        if result["vars"]:
-            variant_df = result["vars"]
-            df = pd.DataFrame(variant_df)
-            df["conditions"] = conditions
-            st.dataframe(df, use_container_width=True)
-                 
+        # ClinVar conditions
+        st.subheader("Top 5 Conditions from ClinVar")
+        for condition in clinvar_conditions:
+            st.write(f"- {condition}")      
+
+# Groq Chatbot
 st.header("EvoBeevos Chatbot 🤖")
-# groq chatbot
+
 client = Groq(
     api_key=st.secrets["GROQ_API_KEY"],
 )
+# Define the Groq Ai's initial instruction
+system_message = {
+    "role": "system",
+    "content": (
+        "You are EvoBeevos, an AI expert in genetic variant analysis."
+        "Help users understand genetic mutations by analyzing ClinVar data and dbDNP data."
+        "You can also provide information on genetic variants and their effects."
+        "You can also provide information on the gene, its function, and the effects of the mutation on it."
+        "Provide concise and expert level information to users."
+        "Step 1: Identify the gene and its biological function."
+        "Step 2: Analyze the effect of the mutation on the protein."
+        "Step 3: Check conservation across species."
+        "Step 4: Reference ClinVar or other databases for known classifications."
+        "Step 5: Conclude with a classification and justification."
+        "### Example 1:"
+        "Variant: TP53 c.215C>G"
+        "**Step 1:** TP53 is a tumor suppressor gene involved in apoptosis and DNA repair." 
+        "**Step 2:** This mutation results in an R72P substitution, altering protein structure."  
+        "**Step 3:** Arginine at position 72 is highly conserved across mammals."  
+        "**Step 4:** Prior research suggests this variant may impair apoptosis, making it potentially pathogenic." 
+        "**Step 5:** Conclusion: *Likely Pathogenic* (based on conservation and functional impact)." 
+
+    )
+}
 
 # Initialize chat history and selected model
 if "messages" not in st.session_state:
-    st.session_state.messages = []
+    st.session_state.messages = [system_message]
 
 if "selected_model" not in st.session_state:
     st.session_state.selected_model = None
@@ -109,7 +160,6 @@ for message in st.session_state.messages:
     avatar = '🤖' if message["role"] == "assistant" else '👨‍💻'
     with st.chat_message(message["role"], avatar=avatar):
         st.markdown(message["content"])
-
 
 def generate_chat_responses(chat_completion) -> Generator[str, None, None]:
     """Yield chat response content from the Groq API response."""
