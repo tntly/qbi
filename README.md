@@ -1,9 +1,24 @@
-# QBI Hackathon
+> QBI Hackathon (UCSF, UCB, and UCSC), Mar 08-09, 2025
+
+# EvoBeevos Variant Predictor
 
 ## Overview
-## Setup
+
+EvoBeevos Variant Predictor is a comprehensive Variant Effect Predictor that leverages the Evo 2 AI model to predict genetic variant effects. It compares these predictions with ClinVar data and Ensemble data, offering users a thorough analysis of variant significance. The app features a Streamlit interface, API integrations, and an AI chatbot for user assistance.
+
+## Workflow
+![worflow](images/workflow.jpg)
+
 ## Usage
-## References
+
+```bash
+streamlit run Evobeevos_interface.py
+```
+
+![interface](images/interface.jpeg)
+
+### Note on Evo 2 Integration
+While EvoBeevos Variant Predictor was designed to utilize the Evo 2 AI model for variant effect prediction, we encountered dependency issues that prevented its installation. Despite this, we successfully implemented other core functionalities, including ClinVar and Ensembl data comparisons, API integrations, and an AI-powered chatbot for user assistance. Future updates may revisit Evo 2 integration as dependency resolutions become available.
 
 ## Contributors
 * Tien Ly
@@ -12,59 +27,3 @@
 * Patricia Saito
 * Lawrence Fung
 * Preethi Nalluru
-* Michael Yu
-
-## Setting up GCP Instance  
-
-Paramters:
-Instance type: e2
-Check gcp_instance.json for other parameters
-
-connect to VM with 
-```bash
-gcloud compute ssh --zone "us-central1-c" "instance-20250308-205757" --project "hackathon-452719"
-```
-
-Install git
-```bash
-$ sudo apt install git-all
-```
-
-Clone github repo evo2
-https://github.com/ArcInstitute/evo2/tree/main
-
-Install conda
-https://www.anaconda.com/docs/getting-started/miniconda/install#quickstart-install-instructions
-```bash
-mkdir -p ~/miniconda3
-wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda3/miniconda.sh
-bash ~/miniconda3/miniconda.sh -b -u -p ~/miniconda3
-rm ~/miniconda3/miniconda.sh
-source ~/miniconda3/bin/activate
-conda init --all
-```
-
-Install make
-```bash
-sudo apt-get install make
-```
-
-## Run streamlit
-try:
-```bash
-streamlit run Evobeevos_interface.py
-```
-
-If that doesn't work cuz stremlit cli is not installed, run it as python module
-```bash
-python -m streamlit run Evobeevos_interface.py
-```
-
-```bash
-git add .
-git commit -m "update"
-
-git pull
-
-git push
-```
