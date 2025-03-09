@@ -4,7 +4,7 @@ from typing import Generator
 import streamlit as st
 import pandas as pd
 import numpy as np
-from clinvar import get_clinvar_data
+from clinvar import get_clinvar_data, fetch_conditions
 
 st.title("EvoBeevos Variant Predictor 🐝")
 
@@ -31,9 +31,11 @@ with st.form("uscs-form",clear_on_submit=False, enter_to_submit=True):
         ucsc_input = f"chr{chromosome_number}:{starting_base_pair}-{ending_base_pair}"
         st.write( "UCSC format",ucsc_input)
         result = get_clinvar_data(ucsc_input)
+        conditions = fetch_conditions(ucsc_input) # get it from cilnvar.py
         if result["vars"]:
             variant_df = result["vars"]
             df = pd.DataFrame(variant_df)
+            df["conditions"] = conditions
             st.dataframe(df, use_container_width=True)
 
 # Display result and score on main page
