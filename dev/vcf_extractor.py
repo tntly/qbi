@@ -18,8 +18,8 @@ def read_vcf(path):
 # %%
 '''
 Example search:
-1. Find BRCA1 gene on UCSC Genome Browser and get chr17:43044295-43125364 
-2. Paste genome location into Clinvar search without the commas and filter for single nucleotide variation
+1. Find BRCA1 gene on UCSC Genome Browser and get chr17:43044295-43125364 from website
+2. Put in parameters of chromosome and start and end location into Defining the range code below
 3. On Clinvar website navigate to "FTP" on Home bar
 4. Click on "vcf_GRCh38/"
 5. Click on "clinvar.vcf.gz" and it will download VCF
@@ -27,7 +27,7 @@ Example search:
 '''
 
 # ENTER your path to the vcf file
-alz_vcf = read_vcf("C:\\Users\\lawfu\\Documents\\Github Hackathon 2025\\clinvar.vcf")
+alz_vcf_raw = read_vcf("C:\\Users\\lawfu\\Documents\\Github Hackathon 2025\\clinvar.vcf")
 
 # %%
 # show first 5 of dataframe
@@ -37,6 +37,17 @@ alz_vcf = read_vcf("C:\\Users\\lawfu\\Documents\\Github Hackathon 2025\\clinvar.
 # this will help create a series from ; separators of vcf file
 def get_condition(x):
     return x.split(";")[2]
+
+# Define the range you want to find on the gene (chr17:43044295-43125364)
+chrom = '19'
+start_pos = 44905796
+end_pos = 44909393
+
+# Filter the DataFrame to find the region within the range for chr##
+alz_vcf = alz_vcf_raw[(alz_vcf_raw['CHROM'] == chrom) & 
+                 (alz_vcf_raw['POS'] >= start_pos) & 
+                 (alz_vcf_raw['POS'] <= end_pos)]
+
 
 # %%
 # get only INFO column from dataframe
@@ -74,10 +85,13 @@ just_conditions = counts_conditions[~counts_conditions.index.isin(["CLNDN=not_pr
 # print(top_cond)
 
 
-# dictionary of just conditions and occurances for top 5
+# dictionary of just conditions and occurances for top 5 for your specific gene
 # print(just_conditions.head(5))
 
 top_cond_dict = {str(condition[6:]): just_conditions[condition].item() for condition in just_conditions.head(5).index}
 
+#get total number of variations in chromosome range
+total_var = len(alz_vcf)
+
 # Print the dictionary
-print(top_cond_dict)
+print(f'{top_cond_dict}\nOut of the number of varations in this chromosome range: {total_var}')
