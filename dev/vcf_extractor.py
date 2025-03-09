@@ -94,4 +94,4 @@ top_cond_dict = {str(condition[6:]): just_conditions[condition].item() for condi
 total_var = len(alz_vcf)
 
 # Print the dictionary
-print(f'{top_cond_dict}\nOut of the number of varations in this chromosome range: {total_var}')
+print(f'Top 5 conditions are: {top_cond_dict}\nOut of the number of varations in this chromosome range: {total_var}')
