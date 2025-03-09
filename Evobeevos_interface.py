@@ -7,7 +7,7 @@ st.title("EvoBeevos Variant Predictor 🐝")
 
 st.header("**About**")
 
-st.write("EvoBeevos is a comprehensive "
+st.write("EvoBeevos Variant Predictor is a comprehensive "
          "Variant Effect Predictor that leverages the Evo 2 AI model "
          "to predict genetic variant effects. It compares these predictions with "
          "ClinVar/dbSNP data, offering users a thorough analysis of variant significance. "
