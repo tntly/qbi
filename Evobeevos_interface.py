@@ -40,11 +40,11 @@ if submitted:
     ] # placeholder
 
     clinvar_conditions = [
-        "Condition 1",
-        "Condition 2",
-        "Condition 3",
-        "Condition 4",
-        "Condition 5"
+        "Inborn_genetic_diseases",
+        "Hereditary_cancer-predisposing_syndrome",
+        "Cardiovascular_phenotype",
+        "Primary_ciliary_dyskinesia",
+        "Inborn_genetic_diseases|not_provided"
     ] # placeholder for clinvar conditions
     
     with st.expander("**Prediction Results**"):
