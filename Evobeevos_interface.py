@@ -10,7 +10,7 @@ st.header("**About**")
 st.write("EvoBeevos Variant Predictor is a comprehensive "
          "Variant Effect Predictor that leverages the Evo 2 AI model "
          "to predict genetic variant effects. It compares these predictions with "
-         "ClinVar/dbSNP data, offering users a thorough analysis of variant significance. "
+         "ClinVar/dbSNP data, and Ensemble data, offering users a thorough analysis of variant significance. "
          "The app features a Streamlit interface, API integrations, and an AI chatbot for user assistance.")
 
 # User input form
@@ -54,7 +54,7 @@ if submitted:
         st.write(f"**Delta Score: **{evo2_delta_score}")
 
         # Ensemble model result
-        st.subheader("Ensemble Model Prediction")
+        st.subheader("Ensemble Data")
         st.write("**Result: **")
         for item in ensemble_result:
             st.write(f"- {item}")
