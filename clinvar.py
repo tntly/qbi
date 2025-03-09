@@ -55,19 +55,3 @@ print(result)
 count_variant = variant_df['ci'].value_counts()
 print(count_variant) """
 
-await fetch("https://www.ncbi.nlm.nih.gov/clinvar/variation/search/?term=%22hbb%22%5BGENE%5D&assembly=GCF_000001405.25", {
-    "credentials": "include",
-    "headers": {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:136.0) Gecko/20100101 Firefox/136.0",
-        "Accept": "application/json, text/javascript, */*; q=0.01",
-        "Accept-Language": "en-US,en;q=0.5",
-        "NCBI-PHID": "CE8C4B837CCBC0810000000000E700AE.m_17.02",
-        "Sec-Fetch-Dest": "empty",
-        "Sec-Fetch-Mode": "cors",
-        "Sec-Fetch-Site": "same-origin",
-        "Sec-GPC": "1"
-    },
-    "referrer": "https://www.ncbi.nlm.nih.gov/clinvar/?term=%22hbb%22%5BGENE%5D&redir=gene",
-    "method": "GET",
-    "mode": "cors"
-});
