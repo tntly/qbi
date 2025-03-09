@@ -11,6 +11,9 @@
 * Solhee Tucker
 * Patricia Saito
 * Lawrence Fung
+* Preethi Nalluru
+* Michael Yu
+* 
 
 ## Setting up GCP Instance  
 
