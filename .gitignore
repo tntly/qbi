@@ -1,2 +1,3 @@
 .streamlit/secret.toml
 venv
+clinvar.vcf
