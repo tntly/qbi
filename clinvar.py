@@ -45,8 +45,9 @@ def get_clinvar_data(ucsc_coords: str, assembly="GRCh38"):
     except requests.exceptions.RequestException as e:
         print(f"Error fetching ClinVar data: {e}")
         return None
-
+""" 
 # Example usage
 ucsc_input = "chr2:12345-67890"
 result = get_clinvar_data(ucsc_input)
 print(result)
+ """
