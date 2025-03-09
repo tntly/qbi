@@ -37,14 +37,9 @@ with st.form("uscs-form",clear_on_submit=False, enter_to_submit=True):
             df = pd.DataFrame(variant_df)
             df["conditions"] = conditions
             st.dataframe(df, use_container_width=True)
-
-# Display result and score on main page
-# Display CliVar comparison on main page as well?
-# Sidebar will have user input info, or should it also be on main page
-# Where to put chatbot?
-# What kind of input do we want the user to put in (i.e DNA sequences? Should we cap how long the sequence can be?)
+                 
 st.header("EvoBeevos Chatbot 🤖")
-# openAi chatbot
+# groq chatbot
 client = Groq(
     api_key=st.secrets["GROQ_API_KEY"],
 )
