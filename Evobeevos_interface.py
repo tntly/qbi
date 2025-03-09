@@ -4,7 +4,7 @@ from typing import Generator
 import streamlit as st
 import pandas as pd
 import numpy as np
-from clinvar import get_clinvar_data
+from clinvar import get_clinvar_data, fetch_conditions
 
 st.title("EvoBeevos Variant Predictor 🐝")
 
@@ -31,18 +31,15 @@ with st.form("uscs-form",clear_on_submit=False, enter_to_submit=True):
         ucsc_input = f"chr{chromosome_number}:{starting_base_pair}-{ending_base_pair}"
         st.write( "UCSC format",ucsc_input)
         result = get_clinvar_data(ucsc_input)
+        conditions = fetch_conditions(ucsc_input) # get it from cilnvar.py
         if result["vars"]:
             variant_df = result["vars"]
             df = pd.DataFrame(variant_df)
+            df["conditions"] = conditions
             st.dataframe(df, use_container_width=True)
-
-# Display result and score on main page
-# Display CliVar comparison on main page as well?
-# Sidebar will have user input info, or should it also be on main page
-# Where to put chatbot?
-# What kind of input do we want the user to put in (i.e DNA sequences? Should we cap how long the sequence can be?)
+                 
 st.header("EvoBeevos Chatbot 🤖")
-# openAi chatbot
+# groq chatbot
 client = Groq(
     api_key=st.secrets["GROQ_API_KEY"],
 )

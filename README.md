@@ -57,3 +57,12 @@ If that doesn't work cuz stremlit cli is not installed, run it as python module
 ```bash
 python -m streamlit run Evobeevos_interface.py
 ```
+
+```bash
+git add .
+git commit -m "update"
+
+git pull
+
+git push
+```
