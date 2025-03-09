@@ -39,14 +39,16 @@ def get_condition(x):
     return x.split(";")[2]
 
 # Define the range you want to find on the gene (chr17:43044295-43125364)
-chrom = '19'
-start_pos = 44905796
-end_pos = 44909393
+chrom = '17'
+start_pos = 43044295
+end_pos = 43125364
 
 # Filter the DataFrame to find the region within the range for chr##
 alz_vcf = alz_vcf_raw[(alz_vcf_raw['CHROM'] == chrom) & 
                  (alz_vcf_raw['POS'] >= start_pos) & 
-                 (alz_vcf_raw['POS'] <= end_pos)]
+                 (alz_vcf_raw['POS'] <= end_pos) &
+                 (alz_vcf_raw["ALT"].str.len() == 1) &
+                 (alz_vcf_raw["REF"].str.len() == 1)]
 
 
 # %%
@@ -94,4 +96,4 @@ top_cond_dict = {str(condition[6:]): just_conditions[condition].item() for condi
 total_var = len(alz_vcf)
 
 # Print the dictionary
-print(f'Top 5 conditions are: {top_cond_dict}\nOut of the number of varations in this chromosome range: {total_var}')
+print(f'Top 5 conditions are: {top_cond_dict}\nOut of the number of single nucleotide varations in this chromosome range: {total_var}')
