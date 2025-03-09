@@ -29,7 +29,7 @@ if submitted:
     st.write(f"**UCSC Format:** {ucsc_input}")
 
     # Placeholder result
-    evo2_result = "Likely to cause LOF" # placeholder
+    evo2_result = "Likely to cause LOF" # demo data for evo2 result
     evo2_delta_score = 0.000299
 
     ensemble_result = [
@@ -37,15 +37,13 @@ if submitted:
         "Consequence terms: stop_gained",
         "biotype: protein_coding",
         "impact: HIGH"
-    ] # placeholder
+    ] # demo data for ensemble result
 
     clinvar_conditions = [
-        "Inborn_genetic_diseases",
+        "Breast ovarian cancer familial susceptibility",
         "Hereditary_cancer-predisposing_syndrome",
-        "Cardiovascular_phenotype",
-        "Primary_ciliary_dyskinesia",
-        "Inborn_genetic_diseases|not_provided"
-    ] # placeholder for clinvar conditions
+        "Hereditary cancer predisposing syndrome"
+    ] # demo data for clinvar conditions
     
     with st.expander("**Prediction Results**"):
         # Evo model result
@@ -53,14 +51,14 @@ if submitted:
         st.write(f"**Result: **{evo2_result}")
         st.write(f"**Delta Score: **{evo2_delta_score}")
 
-        # Ensemble model result
+        # Ensembl model result
         st.subheader("Ensembl Data")
         st.write("**Result: **")
         for item in ensemble_result:
             st.write(f"- {item}")
         
         # ClinVar conditions
-        st.subheader("Top 5 Conditions from ClinVar")
+        st.subheader("Top 3 Conditions from ClinVar")
         for condition in clinvar_conditions:
             st.write(f"- {condition}")      
 
