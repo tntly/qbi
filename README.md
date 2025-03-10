@@ -3,16 +3,12 @@
 # EvoBeevos Variant Predictor
 
 ## Overview
-
 EvoBeevos Variant Predictor is a comprehensive Variant Effect Predictor that leverages the Evo 2 AI model to predict genetic variant effects. It compares these predictions with ClinVar data and Ensemble data, offering users a thorough analysis of variant significance. The app features a Streamlit interface, API integrations, and an AI chatbot for user assistance.
-
-[Presentation Slides](https://docs.google.com/presentation/d/1zzawLlJqbMGvHXB5qwNDyX6UhS8TQLWEYcScaHH_GfU/edit?usp=sharing)
 
 ## Workflow
 ![worflow](images/workflow.jpg)
 
 ## Usage
-
 ```bash
 streamlit run Evobeevos_interface.py
 ```
